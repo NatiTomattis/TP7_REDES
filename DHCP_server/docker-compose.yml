@@ -1,0 +1,64 @@
+version: "2"
+services:
+  dhcp_server:
+    build: ./server
+    container_name: dhcp_server
+    # entrypoint: /bin/sh
+    stdin_open: true
+    privileged: true
+    tty: true
+    networks:
+      dhcp_local:
+       ipv4_address: 19.19.19.5
+  host1:
+    build: ./host
+    container_name: host1
+    stdin_open: true
+    tty: true
+    privileged: true
+    # entrypoint: /bin/sh
+    networks: 
+      - dhcp_local
+
+  host2:
+    build: ./host
+    container_name: host2
+    stdin_open: true
+    tty: true
+    privileged: true
+    # entrypoint: /bin/sh
+    networks: 
+      - dhcp_local
+
+  dns_server:
+    build: ../DNS_server
+    container_name: dns_server
+    # entrypoint: service bind9 restart && bash
+    # command: /etc/init.d/bind9 restart
+    stdin_open: true
+    tty: true
+    networks:
+       dhcp_local:
+        ipv4_address: 19.19.19.49
+      # rede_local:
+      #   ipv4_address: 19.19.19.3
+    # dns: 19.19.19.2
+
+  # host2:
+  #   image: busybox
+  #   container_name: host2
+  #   stdin_open: true
+  #   tty: true
+  #   entrypoint: /bin/sh
+  #   networks:
+  #     - dhcp_local
+
+networks:
+  dhcp_local:
+    driver: bridge
+    ipam:
+      driver: default
+      config:
+      - subnet: 19.19.19.0/24
+        gateway: 19.19.19.1
+

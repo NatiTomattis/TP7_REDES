@@ -1,0 +1,22 @@
+$TTL    604800
+@       IN      SOA     master.rede.unc.local. admin.rede.unc.local. (
+                              5         ; Serial
+                         604800         ; Refresh
+                          86400         ; Retry
+                        2419200         ; Expire
+                         604800 )       ; Negative Cache TTL
+;
+
+; Name servers
+;example.com.    IN      NS      ns1.example.com.
+rede.unc.local.    IN      NS      master.rede.unc.local.
+
+; A records for name servers
+;ns1             IN      A       192.0.2.1
+master             IN      A       19.19.19.49
+host1		IN	A	19.19.19.50
+host2		IN	A	19.19.19.51
+
+; Other A records
+@               IN      A       19.19.19.6
+www             IN      A       19.19.19.6
