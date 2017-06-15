@@ -138,6 +138,8 @@ networks:
       driver: default
       config:
       - subnet: 19.19.19.0/24
+    driver_opts:
+      com.docker.network.bridge.name: rede-local
 
   redd-local:
     driver: bridge
@@ -145,9 +147,14 @@ networks:
       driver: default
       config:
       - subnet: 18.18.18.0/24
+    driver_opts:
+      com.docker.network.bridge.name: redd-local
 
   rede-quagga:
+    driver: bridge
     ipam:
       driver: default
       config:
       - subnet: 10.10.10.0/29
+    driver_opts:
+      com.docker.network.bridge.name: rede-quagga
