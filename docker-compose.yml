@@ -7,9 +7,11 @@ services:
     stdin_open: true
     privileged: true
     tty: true
+    depends_on:
+      - dns_server
     networks:
-      dhcp_local:
-       ipv4_address: 19.19.19.5
+      rede_local:
+       ipv4_address: 19.19.19.252
   host1:
     build: ./host
     container_name: host1
@@ -17,18 +19,32 @@ services:
     tty: true
     privileged: true
     # entrypoint: /bin/sh
+    depends_on:
+      - dhcp_server
+      - quagga19
     networks: 
-      - dhcp_local
-
+      - rede_local
   host2:
     build: ./host
     container_name: host2
     stdin_open: true
     tty: true
     privileged: true
+    depends_on:
+      - dhcp_server
+      - quagga19
     # entrypoint: /bin/sh
     networks: 
-      - dhcp_local
+      - rede_local
+  # haproxy:
+  #   build: ./HAproxy
+  #   container_name: haproxy
+  #   stdin_open: true
+  #   tty: true
+  #   privileged: true
+  #   # entrypoint: /bin/sh
+  #   networks: 
+  #     - rede_local
 
   dns_server:
     build: ./DNS_server
@@ -38,19 +54,45 @@ services:
     stdin_open: true
     tty: true
     networks:
-       dhcp_local:
-        ipv4_address: 19.19.19.49
+       rede_local:
+        ipv4_address: 19.19.19.253
       # rede_local:
       #   ipv4_address: 19.19.19.3
     # dns: 19.19.19.2
+  quagga19:
+    image: tp7redes_quagga
+    container_name: quagga19
+    privileged: true
+    # ipv4_address: 19.19.19.49
+    volumes:
+      - ~/Documents/REDES/TP7_REDES/Quagga/volumes/routere-quagga:/etc/quagga
+    networks:
+      rede_local:
+        ipv4_address: 19.19.19.254
+      rede-quagga:
+        ipv4_address: 10.10.10.3
+
+  quagga18:
+    image: tp7redes_quagga
+    container_name: quagga18
+    privileged: true
+    volumes:
+      - ~/Documents/REDES/TP7_REDES/Quagga/volumes/test-quagga:/etc/quagga
+    networks:
+      rede-quagga:
+        ipv4_address: 10.10.10.4
 
 networks:
-  dhcp_local:
+  rede_local:
     driver: bridge
     ipam:
       driver: default
       config:
       - subnet: 19.19.19.0/24
-        gateway: 19.19.19.1
+      # ip-range: 19.19.19.100/
 
-
+  rede-quagga:
+    ipam:
+      driver: default
+      config:
+      - subnet: 10.10.10.0/29

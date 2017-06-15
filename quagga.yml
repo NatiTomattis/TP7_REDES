@@ -1,0 +1,19 @@
+version: "2"
+services:  
+  quagga18:
+    image: tp7redes_quagga
+    container_name: test-quagga
+    privileged: true
+    volumes:
+      - ~/Documents/REDES/TP7_REDES/volumes/test-quagga:/etc/quagga
+    networks:
+      quagga_test:
+        ipv4_address: 192.168.99.30
+
+networks:
+  quagga_test:
+    driver: bridge
+    ipam:
+      driver: default
+      config:
+      - subnet: 192.168.99.125/25
