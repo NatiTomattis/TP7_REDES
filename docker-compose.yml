@@ -1,5 +1,6 @@
 version: "2"
 services:
+
   dhcp_server:
     build: ./DHCP_server
     container_name: dhcp_server
@@ -12,6 +13,7 @@ services:
     networks:
       rede_local:
        ipv4_address: 19.19.19.252
+
   host1:
     build: ./host
     container_name: host1
@@ -24,6 +26,7 @@ services:
       - quagga19
     networks: 
       - rede_local
+
   host2:
     build: ./host
     container_name: host2
@@ -36,15 +39,6 @@ services:
     # entrypoint: /bin/sh
     networks: 
       - rede_local
-  # haproxy:
-  #   build: ./HAproxy
-  #   container_name: haproxy
-  #   stdin_open: true
-  #   tty: true
-  #   privileged: true
-  #   # entrypoint: /bin/sh
-  #   networks: 
-  #     - rede_local
 
   dns_server:
     build: ./DNS_server
@@ -59,6 +53,7 @@ services:
       # rede_local:
       #   ipv4_address: 19.19.19.3
     # dns: 19.19.19.2
+
   quagga19:
     image: tp7redes_quagga
     container_name: quagga19
@@ -81,6 +76,48 @@ services:
     networks:
       rede-quagga:
         ipv4_address: 10.10.10.4
+
+  haproxy:
+    image: haproxy:1.7-alpine
+    container_name: haproxy
+    stdin_open: true
+    tty: true
+    volumes:
+      - ~/Documents/REDES/TP7_REDES/HAproxy/haproxy.cfg:/usr/local/etc/haproxy/haproxy.cfg:ro
+    expose:
+      - "8443"
+    depends_on:
+      - http-server
+      - http-server2
+    # privileged: true
+    # entrypoint: /bin/sh
+    networks: 
+      rede_local:
+        ipv4_address: 19.19.19.7
+
+  http-server:
+    image: trinitronx/python-simplehttpserver
+    container_name: http-server
+    tty: true
+    volumes:
+      - ~/Documents/REDES/TP7_REDES/HAproxy/http-server/app1.txt:/var/www/app1.txt:ro
+    expose:
+      - "8080"
+    networks:
+      rede_local:
+        ipv4_address: 19.19.19.8
+
+  http-server2:
+    image: trinitronx/python-simplehttpserver
+    container_name: http-server2
+    tty: true
+    volumes:
+      - ~/Documents/REDES/TP7_REDES/HAproxy/http-server/app2.txt:/var/www/app2.txt:ro
+    expose:
+      - "8080"
+    networks:
+      rede_local:
+        ipv4_address: 19.19.19.9
 
 networks:
   rede_local:

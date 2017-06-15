@@ -1,0 +1,64 @@
+version: "2"
+services:
+  haproxy:
+    image: haproxy:1.7-alpine
+    container_name: haproxy
+    stdin_open: true
+    tty: true
+    volumes:
+      - ~/Documents/REDES/TP7_REDES/HAproxy/haproxy.cfg:/usr/local/etc/haproxy/haproxy.cfg:ro
+    expose:
+      - "8443"
+    # privileged: true
+    # entrypoint: /bin/sh
+    networks: 
+      - test
+
+  host1:
+    build: ../host
+    container_name: host1
+    stdin_open: true
+    tty: true
+    # privileged: true
+    entrypoint: /bin/sh
+    # expose:
+    #   - "8443"
+    depends_on:
+      - haproxy
+      - http-server
+      # - quagga19
+    networks: 
+      - test
+
+  http-server:
+    image: trinitronx/python-simplehttpserver
+    container_name: http-server
+    tty: true
+    volumes:
+      - ~/Documents/REDES/TP7_REDES/HAproxy/http-server/app1.txt:/var/www/app1.txt:ro
+    expose:
+      - "8080"
+    networks:
+      test:
+        ipv4_address: 190.19.19.5
+
+  http-server2:
+    image: trinitronx/python-simplehttpserver
+    container_name: http-server2
+    tty: true
+    volumes:
+      - ~/Documents/REDES/TP7_REDES/HAproxy/http-server/app2.txt:/var/www/app2.txt:ro
+    expose:
+      - "8080"
+    networks:
+      test:
+        ipv4_address: 190.19.19.6
+
+
+networks:
+  test:
+    driver: bridge
+    ipam:
+      driver: default
+      config:
+      - subnet: 190.19.19.0/24
