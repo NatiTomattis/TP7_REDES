@@ -1,6 +1,6 @@
 $TTL    604800
-@       IN      SOA     master.rede.unc.local. admin.rede.unc.local. (
-                              5         ; Serial
+@       IN      SOA     rede.unc.local. admin.rede.unc.local. (
+                              6         ; Serial
                          604800         ; Refresh
                           86400         ; Retry
                         2419200         ; Expire
@@ -16,6 +16,7 @@ rede.unc.local.    IN      NS      master.rede.unc.local.
 master             IN      A       19.19.19.253
 host1		IN	A	19.19.19.10
 host2		IN	A	19.19.19.11
+haproxy     IN  A 	19.19.19.7
 
 ; Other A records
 @               IN      A       19.19.19.6

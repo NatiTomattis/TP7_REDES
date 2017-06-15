@@ -1,6 +1,6 @@
 version: "2"
 services:
-
+#DHCP SERVER REDE
   dhcp_server:
     build: ./DHCP_server
     container_name: dhcp_server
@@ -14,6 +14,7 @@ services:
       rede-local:
        ipv4_address: 19.19.19.252
 
+  #HOST DE PRUEBA PARA REDE
   host1:
     build: ./host-rede
     container_name: host-rede
@@ -26,18 +27,6 @@ services:
       - quagga19
     networks: 
       - rede-local
-
-  host2:
-    build: ./host-redd
-    container_name: host-redd
-    stdin_open: true
-    tty: true
-    cap_add:
-      - NET_ADMIN
-    depends_on:
-      - quagga18
-    networks: 
-      - redd-local
 
   dns_server:
     build: ./DNS_server
@@ -55,24 +44,12 @@ services:
     privileged: true
     # ipv4_address: 19.19.19.49
     volumes:
-      - ~/Documents/REDES/TP7_REDES/Quagga/volumes/routere-quagga:/etc/quagga
+      - ./Quagga/volumes/routere-quagga:/etc/quagga
     networks:
       rede-local:
         ipv4_address: 19.19.19.254
       rede-quagga:
         ipv4_address: 10.10.10.3
-
-  quagga18:
-    image: tp7redes_quagga
-    container_name: quagga18
-    privileged: true
-    volumes:
-      - ~/Documents/REDES/TP7_REDES/Quagga/volumes/test-quagga:/etc/quagga
-    networks:
-      rede-quagga:
-        ipv4_address: 10.10.10.4
-      redd-local:
-        ipv4_address: 18.18.18.254
 
   haproxy:
     # image: haproxy:1.7-alpine
@@ -83,13 +60,29 @@ services:
     stdin_open: true
     tty: true
     volumes:
-      - ~/Documents/REDES/TP7_REDES/HAproxy/haproxy.cfg:/usr/local/etc/haproxy/haproxy.cfg:ro
+      - ./HAproxy/haproxy.cfg:/usr/local/etc/haproxy/haproxy.cfg:ro
     expose:
       - "8443"
     networks: 
       rede-local:
         ipv4_address: 19.19.19.7
         # gateway: 19.19.19.254
+
+  #HASTA ACA ES NUESTRO TP
+  #----------------------------------------------------------------------------------------------
+  #SERVICIOS PARA PROBAR EL FUNCIONAMIENTO DE NUESTROS SERVICIOS (FALTA PROBAR DNS)
+
+  quagga18:
+    image: tp7redes_quagga
+    container_name: quagga18
+    privileged: true
+    volumes:
+      - ./Quagga/volumes/test-quagga:/etc/quagga
+    networks:
+      rede-quagga:
+        ipv4_address: 10.10.10.4
+      redd-local:
+        ipv4_address: 18.18.18.254
 
   http-server:
     build: ./HAproxy/http-server
@@ -100,7 +93,7 @@ services:
       - NET_ADMIN
     # privileged: true
     volumes:
-      - ~/Documents/REDES/TP7_REDES/HAproxy/http-server/app1.txt:/var/www/app1.txt:ro
+      - ./HAproxy/http-server/app1.txt:/var/www/app1.txt:ro
     expose:
       - "8080"
     # depends_on:
@@ -118,7 +111,7 @@ services:
     tty: true
     # entrypoint: /bin/sh
     volumes:
-      - ~/Documents/REDES/TP7_REDES/HAproxy/http-server/app2.txt:/var/www/app2.txt:ro
+      - ./HAproxy/http-server/app2.txt:/var/www/app2.txt:ro
     expose:
       - "8080"
     # depends_on:
@@ -126,6 +119,17 @@ services:
     networks:
       redd-local:
         ipv4_address: 18.18.18.11
+  host2:
+    build: ./host-redd
+    container_name: host-redd
+    stdin_open: true
+    tty: true
+    cap_add:
+      - NET_ADMIN
+    depends_on:
+      - quagga18
+    networks: 
+      - redd-local
 
 networks:
   rede-local:
